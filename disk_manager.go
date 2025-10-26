@@ -17,8 +17,8 @@ func NewDiskManager(file *os.File) *DiskManager {
 	}
 }
 
-func (dm *DiskManager) ReadFile(buf []byte, offset int64) error {
-	_, err := dm.file.ReadAt(buf, offset)
+func (dm *DiskManager) Read(file *os.File, buf []byte, offset int64) error {
+	_, err := file.ReadAt(buf, offset)
 	if err != nil && !errors.Is(err, io.EOF) {
 		return fmt.Errorf("failed to read file: %w", err)
 	}
@@ -26,8 +26,8 @@ func (dm *DiskManager) ReadFile(buf []byte, offset int64) error {
 	return nil
 }
 
-func (dm *DiskManager) WriteFile(buf []byte, offset int64) error {
-	_, err := dm.file.WriteAt(buf, offset)
+func (dm *DiskManager) Write(file *os.File, buf []byte, offset int64) error {
+	_, err := file.WriteAt(buf, offset)
 	if err != nil {
 		return fmt.Errorf("failed to write file: %w", err)
 	}

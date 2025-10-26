@@ -23,7 +23,7 @@ type mockDiskManager struct {
 	result  []byte
 }
 
-func (md *mockDiskManager) ReadFile(buf []byte, offset int64) error {
+func (md *mockDiskManager) Read(file *os.File, buf []byte, offset int64) error {
 	if md.wantErr {
 		return errors.New("failed to read from file")
 	}
@@ -33,7 +33,7 @@ func (md *mockDiskManager) ReadFile(buf []byte, offset int64) error {
 	return nil
 }
 
-func (md *mockDiskManager) WriteFile(buf []byte, offset int64) error {
+func (md *mockDiskManager) Write(file *os.File, buf []byte, offset int64) error {
 	if md.wantErr {
 		return errors.New("failed to write to file")
 	}
@@ -46,6 +46,7 @@ func TestStorageManager_InsertTuple(t *testing.T) {
 		diskManager diskManager
 	}
 	type args struct {
+		file   *os.File
 		pageID int
 		tuple  []byte
 	}
@@ -78,6 +79,7 @@ func TestStorageManager_InsertTuple(t *testing.T) {
 				},
 			},
 			args: args{
+				file:   testFile(t),
 				pageID: 1,
 				tuple:  make([]byte, PageSize),
 			},
@@ -89,7 +91,7 @@ func TestStorageManager_InsertTuple(t *testing.T) {
 			sm := &StorageManager{
 				diskManager: tt.fields.diskManager,
 			}
-			if err := sm.InsertTuple(tt.args.pageID, tt.args.tuple); (err != nil) != tt.wantErr {
+			if err := sm.InsertTuple(tt.args.file, tt.args.pageID, tt.args.tuple); (err != nil) != tt.wantErr {
 				t.Errorf("StorageManager.InsertTuple() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})
@@ -101,6 +103,7 @@ func TestStorageManager_ReadTuple(t *testing.T) {
 		diskManager diskManager
 	}
 	type args struct {
+		file   *os.File
 		pageID int
 	}
 	tests := []struct {
@@ -120,6 +123,7 @@ func TestStorageManager_ReadTuple(t *testing.T) {
 				},
 			},
 			args: args{
+				file:   testFile(t),
 				pageID: 1,
 			},
 			wantErr: false,
@@ -134,6 +138,7 @@ func TestStorageManager_ReadTuple(t *testing.T) {
 				},
 			},
 			args: args{
+				file:   testFile(t),
 				pageID: 1,
 			},
 			wantErr: true,
@@ -144,7 +149,7 @@ func TestStorageManager_ReadTuple(t *testing.T) {
 			sm := &StorageManager{
 				diskManager: tt.fields.diskManager,
 			}
-			_, err := sm.ReadTuple(tt.args.pageID)
+			_, err := sm.ReadTuple(tt.args.file, tt.args.pageID)
 			if (err != nil) != tt.wantErr {
 				t.Fatalf("StorageManager.ReadTuple() error = %v, wantErr %v", err, tt.wantErr)
 			}
