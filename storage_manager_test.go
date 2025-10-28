@@ -91,7 +91,7 @@ func TestStorageManager_InsertTuple(t *testing.T) {
 			sm := &StorageManager{
 				diskManager: tt.fields.diskManager,
 			}
-			if err := sm.InsertTuple(tt.args.file, tt.args.pageID, tt.args.tuple); (err != nil) != tt.wantErr {
+			if err := sm.WritePage(tt.args.file, tt.args.pageID, tt.args.tuple); (err != nil) != tt.wantErr {
 				t.Errorf("StorageManager.InsertTuple() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})
@@ -149,7 +149,7 @@ func TestStorageManager_ReadTuple(t *testing.T) {
 			sm := &StorageManager{
 				diskManager: tt.fields.diskManager,
 			}
-			_, err := sm.ReadTuple(tt.args.file, tt.args.pageID)
+			_, err := sm.ReadPage(tt.args.file, tt.args.pageID)
 			if (err != nil) != tt.wantErr {
 				t.Fatalf("StorageManager.ReadTuple() error = %v, wantErr %v", err, tt.wantErr)
 			}

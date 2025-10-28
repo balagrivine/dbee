@@ -30,23 +30,23 @@ func NewStorageManager(diskManager diskManager) *StorageManager {
 	}
 }
 
-// ReadTuple reads a tuple from file, within the page specified by pageID.
-func (sm *StorageManager) ReadTuple(file *os.File, pageID int) ([]byte, error) {
-	tuple := make([]byte, sm.PageSize)
+// ReadPage reads a page with id pageID from file.
+func (sm *StorageManager) ReadPage(file *os.File, pageID int) ([]byte, error) {
+	page := make([]byte, sm.PageSize)
 	pageOffset := int64(pageID * sm.PageSize)
 
-	err := sm.diskManager.Read(file, tuple, pageOffset)
+	err := sm.diskManager.Read(file, page, pageOffset)
 	if err != nil {
 		return nil, fmt.Errorf("failed to read page contents: %w", err)
 	}
 
-	return tuple, nil
+	return page, nil
 }
 
-// InsertTuple inserts a tuple inside file, within the page specified by pageID
+// WritePage writes tuple to a page with id pageID
 // Given the constant page size of 4KB, we are guaranteed that the write operation will
 // happen atomically.
-func (sm *StorageManager) InsertTuple(file *os.File, pageID int, tuple []byte) error {
+func (sm *StorageManager) WritePage(file *os.File, pageID int, tuple []byte) error {
 	pageOffset := int64(pageID * sm.PageSize)
 
 	err := sm.diskManager.Write(file, tuple, pageOffset)
