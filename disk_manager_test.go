@@ -42,8 +42,8 @@ func TestDiskManager_ReadFile(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			dm := &DiskManager{}
-			if err := dm.Read(tt.args.file, tt.args.buf, tt.args.offset); (err != nil) != tt.wantErr {
+			dm := NewDiskManager(tt.args.file)
+			if err := dm.Read(tt.args.buf, tt.args.offset); (err != nil) != tt.wantErr {
 				t.Errorf("DiskManager.ReadFile() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})
@@ -88,10 +88,8 @@ func TestDiskManager_WriteFile(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			dm := &DiskManager{
-				file: tt.fields.file,
-			}
-			if err := dm.Write(tt.args.file, tt.args.buf, tt.args.offset); (err != nil) != tt.wantErr {
+			dm := NewDiskManager(tt.args.file)
+			if err := dm.Write(tt.args.buf, tt.args.offset); (err != nil) != tt.wantErr {
 				t.Errorf("DiskManager.WriteFile() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})
