@@ -5,6 +5,7 @@ linters:
   default: all
   disable:
     - err113
+    - wrapcheck
   settings:
     funlen:
       lines: -1
